@@ -11,6 +11,9 @@
 3. **PIP Dependencies** - Once your virtual environment is setup and running, install the required dependencies by navigating to the `/backend` directory and running:
 
 ```bash
+cd backend
+py -3.7 -m venv venv
+source venv/Scripts/activate
 pip install -r requirements.txt
 ```
 
@@ -21,6 +24,33 @@ pip install -r requirements.txt
 - [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use to handle the lightweight SQL database. You'll primarily work in `app.py`and can reference `models.py`.
 
 - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross-origin requests from our frontend server.
+
+
+### Step 0: Start/Stop the PostgreSQL server
+
+Windows users can follow the commands below:
+- Find the database directory, it should be something like that: *C:\Program Files\PostgreSQL\13.2\data*
+- Then, in the command line, execute the folllowing command: 
+```bash
+# Start the server
+pg_ctl -D "C:\Program Files\PostgreSQL\14\data" start
+# Stop the server
+pg_ctl -D "C:\Program Files\PostgreSQL\14\data" stop
+```
+If it shows that the *port already occupied* error, run:
+```bash
+sudo su - 
+ps -ef | grep postmaster | awk '{print $2}'
+kill <PID> 
+```
+
+
+
+
+
+
+
+
 
 ### Set up the Database
 
@@ -35,6 +65,10 @@ Populate the database using the `trivia.psql` file provided. From the `backend` 
 ```bash
 psql trivia < trivia.psql
 ```
+
+psql -f trivia.psql -U postgres -d trivia
+
+
 
 ### Run the Server
 
