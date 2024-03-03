@@ -129,11 +129,17 @@ def create_app(test_config=None):
         if len(current_questions) == 0:
             abort(404)
 
+        categories = Category.query.all()
+        string_categories = {
+            category.id: category.type for category in categories}
+
         return jsonify(
             {
                 "success": True,
                 "questions": current_questions,
                 "total_questions": len(Question.query.all()),
+                "categories": string_categories,
+                "current_category": None  # check this
             }
         )
 
@@ -222,7 +228,8 @@ def create_app(test_config=None):
 
     @app.route("/questions/search", methods=['POST'])
     def search_questions():
-        search_term = request.form.get('search_term', '')
+        body = request.get_json()
+        search_term = body.get('searchTerm', '')
         search = "%{}%".format(search_term)
         selection = Question.query.filter(
             Question.question.ilike(search)).all()
@@ -231,11 +238,17 @@ def create_app(test_config=None):
         if len(current_questions) == 0:
             abort(404)
 
+        categories = Category.query.all()
+        string_categories = {
+            category.id: category.type for category in categories}
+
         return jsonify(
             {
                 "success": True,
                 "questions": current_questions,
                 "total_questions": len(selection),
+                "current_category": None  # check this
+
             }
         )
 
@@ -294,7 +307,9 @@ def create_app(test_config=None):
             selection = Question.query.all()
         else:
             selection = Question.query.filter(
-                Question.category == quiz_category['id'] and Question.id.notin_(previous_questions)).all()
+                Question.category == quiz_category['id'],
+                Question.id.notin_(previous_questions)
+            ).all()
 
         if len(selection) == 0:
             abort(404)
